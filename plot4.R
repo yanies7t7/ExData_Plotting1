@@ -1,0 +1,22 @@
+setwd("C:/Users/07115/Desktop/Cousera/Week1 Assignment")
+plot4 <- read.table("household_power_consumption.txt", header=TRUE, sep=";", na.strings = "?", colClasses = c('character','character','numeric','numeric','numeric','numeric','numeric','numeric','numeric'))
+plot4$Date <- as.Date(plot4$Date,"%d/%m/%Y")
+plot4 <- subset(plot4,Date >= as.Date("2007-2-1") & Date <= as.Date("2007-2-2"))
+plot4 <- plot4[complete.cases(plot1),]
+dateT <- paste(plot4$Date,plot4$Time)
+dateT <- setNames(dateT, "DateTime")
+plot4 <- plot4[ ,!(names(plot4) %in% c("Date","Time"))]
+plot4 <- cbind(dateT, plot4)
+plot4$dateT <- as.POSIXct(dateT)
+par(mfrow=c(2,2), mar=c(4,4,2,1), oma=c(0,0,2,0))
+with(plot4, {
+  plot(Global_active_power~dateT, type="l",ylab="Global Active Power", xlab="")
+  plot(Voltage~dateT, type="l", ylab="Voltage", xlab="datetime")
+  plot(Sub_metering_1~dateT, type="l", ylab="Energy sub metering", xlab="")
+  lines(Sub_metering_2~dateT,col='Red')
+  lines(Sub_metering_3~dateT,col='Blue')
+  legend("topright", col=c("black", "red", "blue"), lty=1, lwd=2, bty="n",legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+  plot(Global_reactive_power~dateT, type="l", ylab="Global_reactive_power",xlab="datetime")
+})
+dev.copy(png,"plot4.png", width=700, height=600)
+dev.off()
